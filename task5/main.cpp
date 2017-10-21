@@ -19,9 +19,8 @@ class stack {
             new_buffer[i] = buffer[i];
         }
         max_size = max_size * 2;
-        char* temp_pointer = buffer;
+        delete[] buffer;
         buffer = new_buffer;
-        delete[] temp_pointer;
     }
 
 public:
@@ -47,7 +46,7 @@ public:
     char pop()
     {
         assert(cur_size);
-        return buffer[cur_size-- - 1];
+        return buffer[--cur_size];
     }
 
     char top()
@@ -56,7 +55,7 @@ public:
         return buffer[cur_size - 1];
     }
 
-    bool is_empty() const { return !(bool)cur_size; }
+    bool is_empty() const { return cur_size == 0; }
 };
 
 bool stack_anagramm(const char* word1, const char* word2, size_t size1, size_t size2)
@@ -67,12 +66,8 @@ bool stack_anagramm(const char* word1, const char* word2, size_t size1, size_t s
     //пытаемся провести последовательность стековых операций)))
     for (int i = 0, j = 0; i < size1; ++i) {
         s.push(word1[i]);
-        for (; j < size2 && !s.is_empty(); ++j) {
-            if (word2[j] == s.top()) {
-                s.pop();
-            } else {
-                break;
-            }
+        for (; j < size2 && !s.is_empty() && word2[j] == s.top(); ++j) {
+            s.pop();
         }
         if (j >= size2) {
             return true;

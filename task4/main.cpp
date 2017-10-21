@@ -9,21 +9,18 @@ class stack {
     int max_size;
     int cur_size;
 
-    void increase_buffer()
-    {
+    void increase_buffer() {
         int* new_buffer = new int[max_size * 2];
         for (int i = 0; i < max_size; ++i) {
             new_buffer[i] = buffer[i];
         }
         max_size = max_size * 2;
-        int* temp_pointer = buffer;
+        delete[] buffer;
         buffer = new_buffer;
-        delete[] temp_pointer;
     }
 
-public:
-    stack()
-    {
+   public:
+    stack() {
         buffer = new int[1];
         max_size = 1;
         cur_size = 0;
@@ -33,38 +30,32 @@ public:
 
     ~stack() { delete[] buffer; }
 
-    void push(int el)
-    {
+    void push(int el) {
         if (cur_size == max_size) {
-            this->increase_buffer();
+            increase_buffer();
         }
         buffer[cur_size++] = el;
     }
 
-    int pop()
-    {
-        if (cur_size) {
-            return buffer[cur_size-- - 1];
+    int pop() {
+        if (cur_size > 0) {
+            return buffer[--cur_size];
         } else {
             return -1;
         }
     }
 
-    bool is_empty() const { return !(bool)cur_size; }
+    bool is_empty() const { return cur_size == 0; }
 };
 
 class queue {
-    stack s1; //сюда будем делать push
-    stack s2; // cюда pop, если пустые то перекидываем в другой
-public:
+    stack s1;  //сюда будем делать push
+    stack s2;  // cюда pop, если пустые то перекидываем в другой
+   public:
     queue() = default;
     queue(const queue& obj) = delete;
-    void push(int el)
-    {
-        s1.push(el);
-    }
-    int pop()
-    {
+    void push(int el) { s1.push(el); }
+    int pop() {
         if (s2.is_empty()) {
             while (!s1.is_empty()) {
                 s2.push(s1.pop());
@@ -74,12 +65,11 @@ public:
     }
 };
 
-int main()
-{
+int main() {
     queue a;
     int n;
     cin >> n;
-    int error_counter = 0;
+    bool error = false;
     for (int i = 0; i < n; ++i) {
         int command, value;
         cin >> command;
@@ -89,12 +79,12 @@ int main()
         } else {
             int temp = a.pop();
             if (temp != value) {
-                error_counter++;
+                error = true;
                 break;
             }
         }
     }
-    if (error_counter) {
+    if (error) {
         cout << "NO";
     } else {
         cout << "YES";
